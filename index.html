@@ -4,127 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Attendance</title>
-    <style>
-        /* Basic styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 1em;
-            text-align: center;
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .attendance-container {
-            background-color: white;
-            padding: 2em;
-            height: 400px;
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .qr-scanner {
-            width: 250px;
-            height: 250px;
-            border: 2px solid #4CAF50;
-            border-radius: 20px;
-            margin-bottom: 1em;
-            position: relative;
-            display: inline-block;
-        }
-
-        #result {
-            margin-top: 1em;
-        }
-
-        .submit-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 0.5em 1em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        footer {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 1em 0;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>Lecture Hall Attendance</h1>
+        <h1>Smart Attendance <i class="fa-solid fa-clipboard-user" style="font-size: 4.5vh;"></i></h1>
     </header>
-
     <main>
         <section class="attendance-container">
-            <h2>Scan Your QR Code</h2>
+            <h2 class="green-text">Scan Your QR Code <i class="fa-solid fa-qrcode"></i></h2>
 
             <!-- QR Scanner -->
             <div id="qr-reader" class="qr-scanner"></div>
-            <p id="result">Waiting for QR scan...</p>
-            <button id="stopScan" class="submit-btn">Stop Scanning</button>
+            <p class="green-text" id="result">Waiting for QR scan...</p>
         </section>
     </main>
-
     <footer>
         <p>&copy; Attendance System</p>
     </footer>
-
-    <select id="cameraSelection">
-        <option value="environment">Back Camera</option>
-        <option value="user">Front Camera</option>
-    </select>
-    
-    <script>
-        const qrReader = new Html5Qrcode("qr-reader");
-    
-        document.getElementById('cameraSelection').addEventListener('change', (event) => {
-            let facingMode = event.target.value;
-            
-            qrReader.stop().then(() => {
-                qrReader.start(
-                    { facingMode: facingMode }, // Switch between front and back camera
-                    {
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 }
-                    },
-                    (decodedText) => {
-                        document.getElementById('result').innerText = `USN: ${decodedText}`;
-                        console.log("Scanned USN:", decodedText);
-                    },
-                    (errorMessage) => {
-                        console.log("QR Scan Error:", errorMessage);
-                    }
-                ).catch((err) => {
-                    console.log("Error starting the QR scanner:", err);
-                });
-            }).catch((err) => {
-                console.log("Error stopping the QR scanner:", err);
-            });
-        });
-    </script>
-    
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="index.js"></script>
 </body>
 </html>
 

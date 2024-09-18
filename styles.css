@@ -1,69 +1,61 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 1em;
-    text-align: center;
-}
-
-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70vh;
-}
-
-.attendance-container {
-    background-color: white;
-    padding: 3em;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 80%;
-}
-
-.qr-scanner {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
-    position: relative;
-    border: 5px solid #4CAF50;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-.usn-input {
-    padding: 1em;
-    margin-bottom: 1em;
-    width: 80%;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-.submit-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 1em 2em;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-footer {
-    background-color: #4CAF50;
-    color: white;
-    text-align: center;
-    padding: 1em 0;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-}
-
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    /* Basic styles */
+    body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 1em;
+        text-align: center;
+    }
+    main {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .attendance-container {
+        background-color: white;
+        padding: 1em;
+        height: 400px;
+        width: 400px;
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    .qr-scanner {
+        width: 200px;
+        height: 200px;
+        border: 2px solid #4CAF50;
+        border-radius: 20px;
+        margin-bottom: 1em;
+        position: relative;
+        display: inline-block;
+    }
+    #result {
+        margin-top: 1em;
+    }
+    .green-text {
+        color: #4CAF50;
+    }
+    .submit-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 0.5em 1em;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    footer {
+        background-color: #4CAF50;
+        color: white;
+        text-align: center;
+        padding: 1em 0;
+    }
