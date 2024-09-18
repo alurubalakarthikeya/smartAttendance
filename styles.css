@@ -1,4 +1,3 @@
-/* styles.css */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -20,14 +19,24 @@ main {
     height: 70vh;
 }
 
-
 .attendance-container {
     background-color: white;
     padding: 3em;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 70%;
+    width: 80%;
+}
+
+.qr-scanner {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    position: relative;
+    border: 5px solid #4CAF50;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
 }
 
 .usn-input {
@@ -56,4 +65,5 @@ footer {
     bottom: 0;
     width: 100%;
 }
+
 
