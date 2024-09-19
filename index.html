@@ -14,20 +14,22 @@
     <main>
         <section class="attendance-container">
             <h2 class="green-text">Scan Your QR Code <i class="fa-solid fa-qrcode"></i></h2>
-
-            <!-- QR Scanner -->
             <div id="qr-reader" class="qr-scanner"></div>
             <p class="green-text" id="result">Waiting for QR scan...</p>
+            <select id="cameraSelection">
+                <option value="environment">Back Camera</option>
+                <option value="user">Front Camera</option>
+            </select>
+            <button id="resetResult">Reset</button>
+            <button id="saveResult">Save</button>
+            <p id="lastScannedUsn"></p>
+            <button id="stopScan">Stop Scan</button>
         </section>
     </main>
     <footer>
         <p>&copy; Attendance System</p>
     </footer>
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-    <script src="index.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
