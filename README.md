@@ -27,4 +27,5 @@ errors and saving time for both
 students and faculty. Reduces
 the need for physical
 attendance sheets.</p>
+Made in collab with my friends  <a style="color: blue" href="https://github.com/ArjiJethin" target=_blank>"Arji Jethin"</a> & <a style="color: red" href="https://github.com/ayushsingh08-dsa" target=_blank>"ASH"</a>. <br>
 Project Link: <a href="https://alurubalakarthikeya.github.io/smartAttendance/">Open</a>
