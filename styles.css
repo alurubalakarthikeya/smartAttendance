@@ -25,7 +25,7 @@
         background-color: white;
         padding: 1em;
         height: 400px;
-        width: 400px;
+        width: 420px;
         border-radius: 20px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         text-align: center;
@@ -70,7 +70,7 @@
         padding: 1em 0;
     }
 
-    button, input, select, textarea {
+    submit-btn{
         padding: 5px 10px;
         border: 1px solid #4CAF50;
         background-color: white;
@@ -79,7 +79,7 @@
         transition: 0.6s;
     }
 
-    button:hover, input:hover, select:hover {
+    submit-btn:hover, input:hover, select:hover {
         background-color: #4CAF50;
         color: white;
     }
