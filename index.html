@@ -14,19 +14,21 @@
     </header>
     <main>
         <section class="attendance-container">
-            <h1 id="msg">Please allow this page to access your camera.</h1>
-            <h2 class="green-text">Scan Your QR Code <i class="fa-solid fa-qrcode"></i></h2>
+            <h2 class="green-text">Scan Your ID <i class="fa-solid fa-id-card"></i></h2>
             <div id="qr-reader" class="qr-scanner">
-                <video></video>  <!-- Only one video element for the camera feed -->
+                <video></video>  <!-- Camera feed -->
+                <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
             </div>
-            <p class="green-text" id="result">Waiting for QR scan...</p>
+            <button class="submit-btn" id="capture-btn">Capture ID</button>
+            <p class="green-text" id="result">Waiting for ID scan...</p>
         </section>
     </main>
     <footer>
         <p>&copy; Attendance System</p>
     </footer>
     
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <!-- Include Tesseract.js -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v4.0.2/dist/tesseract.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
