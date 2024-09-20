@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Attendance</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="image.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 <body>
@@ -13,8 +14,13 @@
     </header>
     <main>
         <section class="attendance-container">
+            <h1 id="msg">Please allow this page to access your camera.</h1>
             <h2 class="green-text">Scan Your QR Code <i class="fa-solid fa-qrcode"></i></h2>
-            <div id="qr-reader" class="qr-scanner"></div>
+            <div id="qr-reader" class="qr-scanner">
+                <div id="wrapper">
+                    <video></video>
+                  </div>
+            </div>
             <p class="green-text" id="result">Waiting for QR scan...</p>
             <select id="cameraSelection">
                 <option value="environment">Back Camera</option>
@@ -26,6 +32,17 @@
             <button id="stopScan">Stop Scan</button>
         </section>
     </main>
+    <!-- Camera Access Modal -->
+    <div id="camera-access-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Camera Access Required</h2>
+            <p>This website needs access to your camera to scan QR codes. Please grant camera access to use this feature.</p>
+            <button id="grant-access-btn">Grant Access</button>
+        </div>
+    </div>
+    <button onclick="document.getElementById('camera-access-modal').style.display='block'">Show Modal</button>
+
     <footer>
         <p>&copy; Attendance System</p>
     </footer>
