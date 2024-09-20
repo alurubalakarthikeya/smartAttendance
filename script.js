@@ -1,19 +1,11 @@
 'use strict';
 
-var message = {},
-  wrapper = {},
-  buttonNewPhoto = {},
-  buttonDownload = {},
-  video = {},
-  canvas = {};
+let message = {};
+let video = {};
 
 function initElement() {
   message = document.getElementById('msg');
-  wrapper = document.getElementById('wrapper');
-  buttonNewPhoto = document.getElementById('newphoto');
-  buttonDownload = document.getElementById('download');
-  video = document.querySelector('video');
-  canvas = document.querySelector('canvas');
+  video = document.querySelector('#qr-reader video');
 
   if (navigator.mediaDevices === undefined) {
     navigator.mediaDevices = {};
@@ -21,8 +13,7 @@ function initElement() {
 
   if (navigator.mediaDevices.getUserMedia === undefined) {
     navigator.mediaDevices.getUserMedia = function (constraints) {
-
-      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+      const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
       if (!getUserMedia) {
         return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
@@ -30,32 +21,9 @@ function initElement() {
 
       return new Promise(function (resolve, reject) {
         getUserMedia.call(navigator, constraints, resolve, reject);
-      })
-    }
+      });
+    };
   }
-}
-
-function onTakeAPhoto() {
-  canvas.getContext('2d').drawImage(video, 0, 0, video.width, video.height);
-  buttonDownload.removeAttribute('disabled');
-}
-
-function onDownloadPhoto() {
-  canvas.toBlob(function (blob) {
-    var link = document.createElement('a');
-    link.download = 'photo.jpg';
-    link.setAttribute('href', URL.createObjectURL(blob));
-    link.dispatchEvent(new MouseEvent('click'));
-
-  }, 'image/jpeg', 1);
-}
-
-function onLoadVideo() {
-  video.setAttribute('width', this.videoWidth);
-  video.setAttribute('height', this.videoHeight);
-  canvas.setAttribute('width', this.videoWidth);
-  canvas.setAttribute('height', this.videoHeight);
-  video.play();
 }
 
 function onMediaStream(stream) {
@@ -65,15 +33,12 @@ function onMediaStream(stream) {
     video.src = window.URL.createObjectURL(stream);
   }
 
-  message.style.display = 'none';
-  wrapper.style.display = 'block';
-  buttonNewPhoto.addEventListener('click', onTakeAPhoto);
-  buttonDownload.addEventListener('click', onDownloadPhoto);
-  video.addEventListener('loadedmetadata', onLoadVideo);
+  message.style.display = 'none';  // Hide the message asking for camera access
+  video.play();  // Start playing the video
 }
 
 function onMediaError(err) {
-  message.innerHTML = err.name + ': ' + err.message;
+  message.innerHTML = err.name + ': ' + err.message;  // Show the error message if camera access fails
 }
 
 function initEvent() {
@@ -88,9 +53,9 @@ function init() {
   initEvent();
 }
 
+// Force the site to use HTTPS if not using file protocol
 if (window.location.protocol != 'https:' && window.location.protocol != 'file:') {
   window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
 }
 
 window.addEventListener('DOMContentLoaded', init);
-

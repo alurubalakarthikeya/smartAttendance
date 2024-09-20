@@ -17,17 +17,15 @@
             <h1 id="msg">Please allow this page to access your camera.</h1>
             <h2 class="green-text">Scan Your QR Code <i class="fa-solid fa-qrcode"></i></h2>
             <div id="qr-reader" class="qr-scanner">
-                <video></video>
+                <video></video>  <!-- Only one video element for the camera feed -->
             </div>
             <p class="green-text" id="result">Waiting for QR scan...</p>
         </section>
     </main>
-    <div id="wrapper">
-        <video></video>
-    </div>
     <footer>
         <p>&copy; Attendance System</p>
     </footer>
+    
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script src="script.js"></script>
 </body>
