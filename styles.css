@@ -87,12 +87,3 @@
 button {
     cursor: pointer;
 }
-
-#msg {
-    color: #808080;
-    font-weight: lighter;
-  }
-  
-  #wrapper {
-    display: none;
-  }
