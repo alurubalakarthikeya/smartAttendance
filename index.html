@@ -22,25 +22,11 @@
                   </div>
             </div>
             <p class="green-text" id="result">Waiting for QR scan...</p>
-            <select id="cameraSelection">
-                <option value="environment">Back Camera</option>
-                <option value="user">Front Camera</option>
-            </select>
-            <button id="resetResult">Reset</button>
-            <button id="saveResult">Save</button>
-            <p id="lastScannedUsn"></p>
-            <button id="stopScan">Stop Scan</button>
         </section>
     </main>
-    <!-- Camera Access Modal -->
-    <div id="camera-access-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Camera Access Required</h2>
-            <p>This website needs access to your camera to scan QR codes. Please grant camera access to use this feature.</p>
-            <button id="grant-access-btn">Grant Access</button>
-        </div>
-    </div>
+    <div id="wrapper">
+        <video></video>
+      </div>
     <footer>
         <p>&copy; Attendance System</p>
     </footer>
