@@ -44,7 +44,7 @@ function onMediaError(err) {
 }
 
 // Capture the image and use OCR to extract text
-function captureImage() {
+/*function captureImage() {
     const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, canvas.width, canvas.height); 
 
@@ -62,7 +62,7 @@ function captureImage() {
         resultElement.innerHTML = 'Error in OCR: ' + err;
     });
 }
-
+*/
 // Initialize events
 function initEvent() {
     navigator.mediaDevices
@@ -81,3 +81,39 @@ if (window.location.protocol != 'https:' && window.location.protocol != 'file:')
     window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
 }
 window.addEventListener('DOMContentLoaded', init);
+
+
+'use strict';
+
+// Initialize the QR code scanner
+function initializeQRScanner() {
+    const resultElement = document.getElementById('result'); // Display result here
+
+    // Success callback when a QR code is successfully scanned
+    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+        console.log(`Decoded Text: ${decodedText}`);
+        resultElement.innerHTML = `Scanned USN: ${decodedText}`; // Display the scanned USN
+    };
+
+    // Error callback if the QR code scan fails or no code is detected
+    const qrCodeErrorCallback = (errorMessage) => {
+        console.log(`QR Code scanning failed: ${errorMessage}`); // Log for debugging
+    };
+
+    // Create a new Html5QrcodeScanner instance
+    const html5QrCodeScanner = new Html5QrcodeScanner(
+        "qr-reader", // The element ID for the scanner
+        {
+            fps: 10,    // Scans per second
+            qrbox: { width: 250, height: 250 } // Size of the scanning box
+        }
+    );
+
+    // Start scanning for QR codes with success and error callbacks
+    html5QrCodeScanner.render(qrCodeSuccessCallback, qrCodeErrorCallback);
+}
+
+// Initialize the scanner when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initializeQRScanner();
+});
