@@ -13,11 +13,11 @@ function initElement() {
 // Start the camera feed inside the video element
 function startCameraFeed() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true })
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
             .then(function (stream) {
                 videoElement.srcObject = stream;
                 videoElement.play(); // Play the camera feed
-                startQRScanner(); // Start scanning after the camera is ready
+                startQRScanner(stream); // Pass the stream to start the QR scanner
             })
             .catch(function (err) {
                 console.error("Error accessing camera: " + err);
@@ -29,7 +29,7 @@ function startCameraFeed() {
 }
 
 // Start the QR code scanner
-function startQRScanner() {
+function startQRScanner(stream) {
     // Create a new Html5Qrcode instance
     html5QrCode = new Html5Qrcode("qr-reader");
 
@@ -44,7 +44,7 @@ function startQRScanner() {
         console.log(`QR Code scanning failed: ${errorMessage}`); // Log for debugging
     };
 
-    // Start scanning for QR codes
+    // Start scanning for QR codes using the provided stream
     html5QrCode.start(
         { facingMode: "environment" }, // Use the back camera
         {
@@ -64,4 +64,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initElement();
     startCameraFeed(); // Start the camera feed when the page loads
 });
+
 
