@@ -2,6 +2,7 @@
 
 let videoElement;
 let resultElement;
+let html5QrCode; // Declare the Html5Qrcode instance
 
 // Initialize elements
 function initElement() {
@@ -11,15 +12,16 @@ function initElement() {
 
 // Start the camera feed inside the video element
 function startCameraFeed() {
-    // Check if the browser supports `getUserMedia`
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(function (stream) {
                 videoElement.srcObject = stream;
                 videoElement.play(); // Play the camera feed
+                startQRScanner(); // Start scanning after the camera is ready
             })
             .catch(function (err) {
                 console.error("Error accessing camera: " + err);
+                resultElement.innerHTML = "Error accessing camera.";
             });
     } else {
         resultElement.innerHTML = "Camera not supported in this browser.";
@@ -28,6 +30,9 @@ function startCameraFeed() {
 
 // Start the QR code scanner
 function startQRScanner() {
+    // Create a new Html5Qrcode instance
+    html5QrCode = new Html5Qrcode("qr-reader");
+
     // Success callback when a QR code is successfully scanned
     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
         console.log(`Decoded Text: ${decodedText}`);
@@ -39,23 +44,24 @@ function startQRScanner() {
         console.log(`QR Code scanning failed: ${errorMessage}`); // Log for debugging
     };
 
-    // Create a new Html5QrcodeScanner instance
-    const html5QrCodeScanner = new Html5QrcodeScanner(
-        "qr-reader", // The element ID for the scanner
+    // Start scanning for QR codes
+    html5QrCode.start(
+        { facingMode: "environment" }, // Use the back camera
         {
             fps: 10,    // Frames per second to scan
             qrbox: { width: 250, height: 250 } // Size of the QR scan area
-        }
-    );
-
-    // Start scanning for QR codes
-    html5QrCodeScanner.render(qrCodeSuccessCallback, qrCodeErrorCallback);
+        },
+        qrCodeSuccessCallback,
+        qrCodeErrorCallback
+    ).catch(err => {
+        console.error("Unable to start scanning: ", err);
+        resultElement.innerHTML = "Unable to start scanning.";
+    });
 }
 
 // Initialize everything when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     initElement();
     startCameraFeed(); // Start the camera feed when the page loads
-    startQRScanner();  // Start the QR code scanner
 });
 
