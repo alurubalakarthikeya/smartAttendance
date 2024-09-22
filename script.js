@@ -1,4 +1,4 @@
-/*'use strict';
+'use strict';
 
 let video = {};
 let canvas = {};
@@ -81,33 +81,3 @@ if (window.location.protocol != 'https:' && window.location.protocol != 'file:')
     window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
 }
 window.addEventListener('DOMContentLoaded', init);
-*/
-'use strict';
-
-// Element to display the scanned result
-let resultElement = document.getElementById('result');
-
-// Success callback when a QR code is successfully scanned
-let qrCodeSuccessCallback = (decodedText, decodedResult) => {
-    resultElement.innerHTML = `Scanned USN: ${decodedText}`; // Display the scanned USN
-
-    // Stop scanning after successfully decoding a QR code
-    html5QrCodeScanner.clear();
-};
-
-// Error callback when QR code scanning fails
-let qrCodeErrorCallback = (errorMessage) => {
-    console.log(`QR Code no match: ${errorMessage}`); // Log errors for debugging
-};
-
-// Create the QR code scanner
-let html5QrCodeScanner = new Html5QrcodeScanner(
-    "qr-reader", // The HTML element ID for the QR scanner
-    {
-        fps: 10,   // Frames per second (scans per second)
-        qrbox: 250 // QR scanning box size
-    }
-);
-
-// Start the QR code scanner and set up callbacks for success and error handling
-html5QrCodeScanner.render(qrCodeSuccessCallback, qrCodeErrorCallback);
