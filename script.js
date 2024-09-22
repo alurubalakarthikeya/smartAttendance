@@ -1,5 +1,4 @@
 'use strict';
-
 let videoElement;
 let resultElement;
 let html5QrCode; // Declare the Html5Qrcode instance
@@ -12,24 +11,20 @@ function initElement() {
 
 // Start the camera feed inside the video element
 function startCameraFeed() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-            .then(function (stream) {
-                videoElement.srcObject = stream;
-                videoElement.play(); // Play the camera feed
-                startQRScanner(stream); // Pass the stream to start the QR scanner
-            })
-            .catch(function (err) {
-                console.error("Error accessing camera: " + err);
-                resultElement.innerHTML = "Error accessing camera.";
-            });
-    } else {
-        resultElement.innerHTML = "Camera not supported in this browser.";
-    }
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+            videoElement.srcObject = stream;
+            videoElement.play(); // Play the camera feed
+            startQRScanner(); // Start scanning after the camera is ready
+        })
+        .catch(function (err) {
+            console.error("Error accessing camera: " + err);
+            resultElement.innerHTML = "Error accessing camera: " + err.message;
+        });
 }
 
 // Start the QR code scanner
-function startQRScanner(stream) {
+function startQRScanner() {
     // Create a new Html5Qrcode instance
     html5QrCode = new Html5Qrcode("qr-reader");
 
@@ -44,7 +39,7 @@ function startQRScanner(stream) {
         console.log(`QR Code scanning failed: ${errorMessage}`); // Log for debugging
     };
 
-    // Start scanning for QR codes using the provided stream
+    // Start scanning for QR codes
     html5QrCode.start(
         { facingMode: "environment" }, // Use the back camera
         {
@@ -55,11 +50,10 @@ function startQRScanner(stream) {
         qrCodeErrorCallback
     ).catch(err => {
         console.error("Unable to start scanning: ", err);
-        resultElement.innerHTML = "Unable to start scanning.";
+        resultElement.innerHTML = "Unable to start scanning: " + err.message;
     });
 }
 
-// Initialize everything when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     initElement();
     startCameraFeed(); // Start the camera feed when the page loads
