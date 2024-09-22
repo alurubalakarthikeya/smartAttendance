@@ -39,7 +39,6 @@ function onMediaStream(stream) {
     video.play();
 }
 
-// Handle camera access errors
 function onMediaError(err) {
     resultElement.innerHTML = 'Error: ' + err.name + ': ' + err.message;
 }
@@ -47,19 +46,18 @@ function onMediaError(err) {
 // Capture the image and use OCR to extract text
 function captureImage() {
     const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);  // Capture frame from video feed
+    context.drawImage(video, 0, 0, canvas.width, canvas.height); 
 
-    const imgData = canvas.toDataURL('image/png');  // Convert canvas image to data URL
+    const imgData = canvas.toDataURL('image/png'); 
 
-    // Use Tesseract.js to perform OCR
     Tesseract.recognize(
         imgData,
         'eng',
         {
-            logger: info => console.log(info)  // Logging the OCR process
+            logger: info => console.log(info) 
         }
     ).then(({ data: { text } }) => {
-        resultElement.innerHTML = 'Scanned Text: ' + text;  // Display extracted text
+        resultElement.innerHTML = 'Scanned Text: ' + text; 
     }).catch(err => {
         resultElement.innerHTML = 'Error in OCR: ' + err;
     });
@@ -71,21 +69,15 @@ function initEvent() {
         .getUserMedia({ video: true })
         .then(onMediaStream)
         .catch(onMediaError);
-
-    // Set up button click listener for capturing the image
     document.getElementById('capture-btn').addEventListener('click', captureImage);
 }
 
-// Initialize the page
 function init() {
     initElement();
     initEvent();
 }
 
-// Force HTTPS
 if (window.location.protocol != 'https:' && window.location.protocol != 'file:') {
     window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
 }
-
-// Wait for DOM content to load before running
 window.addEventListener('DOMContentLoaded', init);

@@ -16,9 +16,9 @@
         <section class="attendance-container">
             <h2 class="green-text">Scan Your ID <i class="fa-solid fa-id-card"></i></h2>
             <div id="qr-reader" class="qr-scanner">
-                <video></video>  <!-- Camera feed -->
+                <video></video> 
                 <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
-            </div>
+            </div><br>
             <button class="submit-btn" id="capture-btn">Capture ID</button>
             <p class="green-text" id="result">Waiting for ID scan...</p>
         </section>
@@ -26,8 +26,6 @@
     <footer>
         <p>&copy; Attendance System</p>
     </footer>
-    
-    <!-- Include Tesseract.js -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v4.0.2/dist/tesseract.min.js"></script>
     <script src="script.js"></script>
 </body>
