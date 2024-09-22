@@ -1,98 +1,37 @@
 'use strict';
 
-let video = {};
-let canvas = {};
-let resultElement = {};
+let videoElement;
+let resultElement;
 
 // Initialize elements
 function initElement() {
-    video = document.querySelector('#qr-reader video');
-    canvas = document.getElementById('canvas');
-    resultElement = document.getElementById('result');
+    videoElement = document.getElementById('videoElement'); // Access the video tag
+    resultElement = document.getElementById('result');      // The element where the scanned QR code text will be displayed
+}
 
-    // Initialize media devices
-    if (navigator.mediaDevices === undefined) {
-        navigator.mediaDevices = {};
-    }
-    if (navigator.mediaDevices.getUserMedia === undefined) {
-        navigator.mediaDevices.getUserMedia = function (constraints) {
-            const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-
-            if (!getUserMedia) {
-                return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
-            }
-
-            return new Promise(function (resolve, reject) {
-                getUserMedia.call(navigator, constraints, resolve, reject);
+// Start the camera feed inside the video element
+function startCameraFeed() {
+    // Check if the browser supports `getUserMedia`
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                videoElement.srcObject = stream;
+                videoElement.play(); // Play the camera feed
+            })
+            .catch(function (err) {
+                console.error("Error accessing camera: " + err);
             });
-        };
-    }
-}
-
-// Start video stream
-function onMediaStream(stream) {
-    if ('srcObject' in video) {
-        video.srcObject = stream;
     } else {
-        video.src = window.URL.createObjectURL(stream);
+        resultElement.innerHTML = "Camera not supported in this browser.";
     }
-    video.play();
 }
 
-function onMediaError(err) {
-    resultElement.innerHTML = 'Error: ' + err.name + ': ' + err.message;
-}
-
-// Capture the image and use OCR to extract text
-/*function captureImage() {
-    const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, canvas.width, canvas.height); 
-
-    const imgData = canvas.toDataURL('image/png'); 
-
-    Tesseract.recognize(
-        imgData,
-        'eng',
-        {
-            logger: info => console.log(info) 
-        }
-    ).then(({ data: { text } }) => {
-        resultElement.innerHTML = 'Scanned Text: ' + text; 
-    }).catch(err => {
-        resultElement.innerHTML = 'Error in OCR: ' + err;
-    });
-}
-*/
-// Initialize events
-function initEvent() {
-    navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then(onMediaStream)
-        .catch(onMediaError);
-    document.getElementById('capture-btn').addEventListener('click', captureImage);
-}
-
-function init() {
-    initElement();
-    initEvent();
-}
-
-if (window.location.protocol != 'https:' && window.location.protocol != 'file:') {
-    window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
-}
-window.addEventListener('DOMContentLoaded', init);
-
-
-'use strict';
-
-// Initialize the QR code scanner
-function initializeQRScanner() {
-    const resultElement = document.getElementById('result'); // Display result here
-
+// Start the QR code scanner
+function startQRScanner() {
     // Success callback when a QR code is successfully scanned
     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
         console.log(`Decoded Text: ${decodedText}`);
-        resultElement.innerHTML = `Scanned USN: ${decodedText}`; // Display the scanned USN
+        resultElement.innerHTML = `Scanned USN: ${decodedText}`; // Display the scanned text (QR code content)
     };
 
     // Error callback if the QR code scan fails or no code is detected
@@ -104,16 +43,19 @@ function initializeQRScanner() {
     const html5QrCodeScanner = new Html5QrcodeScanner(
         "qr-reader", // The element ID for the scanner
         {
-            fps: 10,    // Scans per second
-            qrbox: { width: 250, height: 250 } // Size of the scanning box
+            fps: 10,    // Frames per second to scan
+            qrbox: { width: 250, height: 250 } // Size of the QR scan area
         }
     );
 
-    // Start scanning for QR codes with success and error callbacks
+    // Start scanning for QR codes
     html5QrCodeScanner.render(qrCodeSuccessCallback, qrCodeErrorCallback);
 }
 
-// Initialize the scanner when the DOM is fully loaded
+// Initialize everything when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    initializeQRScanner();
+    initElement();
+    startCameraFeed(); // Start the camera feed when the page loads
+    startQRScanner();  // Start the QR code scanner
 });
+
