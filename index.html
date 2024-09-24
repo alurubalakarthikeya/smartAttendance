@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="image.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Smart Attendance <i class="fa-solid fa-clipboard-user" style="font-size: 4.5vh;"></i></h1>
+    </header>
+    <main>
+        <section class="attendance-container">
+            <h2 class="green-text">Scan Your ID <i class="fa-solid fa-id-card"></i></h2>
+            <div id="qr-reader" class="qr-scanner">
+                <video id="videoElement" autoplay></video>
+            </div>
+            <br>
+            <p class="green-text" id="result">Waiting for ID scan...</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; Attendance System</p>
+    </footer>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
