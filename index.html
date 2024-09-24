@@ -1,31 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="image.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code and Text Scanner</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="image.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+  </head>
+  <body>
     <header>
-        <h1>Smart Attendance <i class="fa-solid fa-clipboard-user" style="font-size: 4.5vh;"></i></h1>
+      <h1>
+        Smart Attendance
+        <i class="fa-solid fa-clipboard-user" style="font-size: 4.5vh"></i>
+      </h1>
     </header>
     <main>
-        <section class="attendance-container">
-            <h2 class="green-text">Scan Your ID <i class="fa-solid fa-id-card"></i></h2>
-            <div id="qr-reader" class="qr-scanner">
-                <video id="videoElement" autoplay></video>
-            </div>
-            <br>
-            <p class="green-text" id="result">Waiting for ID scan...</p>
-        </section>
+      <section class="attendance-container">
+        <h2 class="green-text">
+          Scan Your ID <i class="fa-solid fa-id-card"></i>
+        </h2>
+        <!-- QR Scanner container -->
+        <div id="qr-reader" class="qr-scanner"></div>
+        <br />
+        <p class="green-text" id="result">Waiting for ID scan...</p>
+        <button id="ocr-button">Scan Text</button>
+        <input
+          type="file"
+          id="image-input"
+          accept="image/*"
+          style="display: none"
+        />
+        <p id="ocr-result" class="green-text"></p>
+      </section>
     </main>
     <footer>
-        <p>&copy; Attendance System</p>
+      <p>&copy; Attendance System</p>
     </footer>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-    <script src="script.js"></script>
-</body>
+
+    <!-- Include the Html5Qrcode and Tesseract.js libraries -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/tesseract.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const qrResult = document.getElementById("result");
+        const ocrResult = document.getElementById("ocr-result");
+        const imageInput = document.getElementById("image-input");
+        const ocrButton = document.getElementById("ocr-button");
+
+        if (typeof Html5Qrcode === "undefined") {
+          qrResult.innerHTML = "QR code scanner not initialized.";
+          return;
+        }
+
+        const html5QrCode = new Html5Qrcode("qr-reader");
+
+        const qrCodeSuccessCallback = (decodedText) => {
+          qrResult.innerHTML = `Scanned ID: ${decodedText}`;
+          html5QrCode
+            .stop()
+            .then(() => {
+              console.log("QR Code scanning stopped.");
+            })
+            .catch((err) => {
+              console.error("Error stopping QR scanner:", err);
+            });
+        };
+
+        const qrCodeErrorCallback = (errorMessage) => {
+          console.log(`QR Code scan error: ${errorMessage}`);
+        };
+
+        const config = {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+        };
+
+        // Start QR Code scanning
+        html5QrCode
+          .start(
+            { facingMode: { exact: "environment" } },
+            config,
+            qrCodeSuccessCallback,
+            qrCodeErrorCallback
+          )
+          .catch(() => {
+            html5QrCode
+              .start(
+                { facingMode: "user" },
+                config,
+                qrCodeSuccessCallback,
+                qrCodeErrorCallback
+              )
+              .catch((err) => {
+                qrResult.innerHTML = `Error starting QR scanner: ${err}`;
+              });
+          });
+
+        // OCR functionality
+        ocrButton.addEventListener("click", function () {
+          imageInput.click(); // Trigger the file input when button is clicked
+        });
+
+        imageInput.addEventListener("change", function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const img = new Image();
+              img.src = e.target.result;
+              img.onload = function () {
+                // Perform OCR using Tesseract.js
+                Tesseract.recognize(img.src, "eng")
+                  .then(({ data: { text } }) => {
+                    ocrResult.innerHTML = `Recognized Text: ${text}`;
+                  })
+                  .catch((err) => {
+                    ocrResult.innerHTML = `OCR Error: ${err.message}`;
+                  });
+              };
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+    </script>
+  </body>
 </html>

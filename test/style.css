@@ -1,0 +1,24 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 0;
+}
+
+.scanner-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+#result {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
+}

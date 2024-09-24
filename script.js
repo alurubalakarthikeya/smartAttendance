@@ -56,7 +56,16 @@ function startQRScanner() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initElement();
-    startCameraFeed(); // Start the camera feed when the page loads
+
+    // Delay start of the QR scanner until Html5Qrcode is defined
+    if (typeof Html5Qrcode !== 'undefined') {
+        startCameraFeed(); // Start the camera feed when the page loads
+    } else {
+        console.error("Html5Qrcode is not loaded.");
+        resultElement.innerHTML = "Error: QR code scanner not initialized.";
+    }
 });
+
+
 
 
