@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header, footer {
+            text-align: center;
+            padding: 10px;
+        }
+        .attendance-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #qr-reader {
+            width: 300px;
+            height: 300px;
+            margin: auto;
+            border: 1px solid #ccc;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+        }
+        #usn-list {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Smart Attendance <i class="fa-solid fa-clipboard-user" style="font-size: 4.5vh;"></i></h1>
+    </header>
+    <main>
+        <section class="attendance-container">
+            <h2>Scan Your ID <i class="fa-solid fa-id-card"></i></h2>
+            <div id="qr-reader"></div>
+            <p id="result">Waiting for ID scan...</p>
+            <button id="fetch-usns">Fetch Stored USNs</button>
+            <ul id="usn-list"></ul> <!-- USNs will be listed here -->
+        </section>
+    </main>
+    <footer>
+        <p>&copy; Attendance System</p>
+    </footer>
+
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script>
+        'use strict';
+        let html5QrCode;
+        let resultElement = document.getElementById('result');
+        const usnListElement = document.getElementById('usn-list');
+
+        // Function to start the camera and QR code scanner
+        function startQRScanner() {
+            const qrReaderElement = document.getElementById("qr-reader");
+
+            // Check if browser supports camera access
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                console.error("Camera not supported in this browser");
+                resultElement.innerHTML = "Camera not supported on this browser.";
+                return;
+            }
+
+            // Request access to the camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    console.log("Camera access granted.");
+                    
+                    // Initialize Html5Qrcode scanner
+                    html5QrCode = new Html5Qrcode("qr-reader");
+                    html5QrCode.start(
+                        { facingMode: "environment" },  // Use back camera
+                        {
+                            fps: 10,  // Scanning frames per second
+                            qrbox: { width: 250, height: 250 }  // Define QR scanning area
+                        },
+                        qrCodeSuccessCallback,  // Success callback
+                        qrCodeErrorCallback     // Error callback
+                    ).catch(err => {
+                        console.error("Error initializing QR scanner: ", err);
+                        resultElement.innerHTML = "Error starting QR scanner: " + err;
+                    });
+                })
+                .catch(function(err) {
+                    console.error("Error accessing camera: ", err);
+                    resultElement.innerHTML = "Error accessing camera: " + err.message;
+                });
+        }
+
+        // Success callback when a QR code is successfully scanned
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            console.log(`Decoded Text: ${decodedText}`);
+            resultElement.innerHTML = `Scanned USN: ${decodedText}`;
+
+            // Send the decoded USN to the backend to store in MongoDB
+            fetch('http://localhost:3000/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ usn: decodedText }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(`Success: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to store USN');
+            });
+
+            // Stop scanning after successful scan
+            html5QrCode.stop().then(() => {
+                console.log("QR Code scanning stopped.");
+            }).catch(err => {
+                console.error("Failed to stop scanning: ", err);
+            });
+        };
+
+        // Error callback if the QR code scan fails or no code is detected
+        const qrCodeErrorCallback = (errorMessage) => {
+            console.log(`QR Code scanning failed: ${errorMessage}`);
+        };
+
+        // Fetch stored USNs from the backend
+        document.getElementById('fetch-usns').addEventListener('click', function() {
+            fetch('http://localhost:3000/usns')
+            .then(response => response.json())
+            .then(data => {
+                usnListElement.innerHTML = '';  // Clear the list
+                data.forEach(usn => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${usn.usn} (Scanned at: ${new Date(usn.scannedAt).toLocaleString()})`;
+                    usnListElement.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching USNs:', error);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            startQRScanner();  // Start scanning when the page is loaded
+        });
+    </script>
+</body>
+</html>

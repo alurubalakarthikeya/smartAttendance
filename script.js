@@ -1,62 +1,57 @@
-'use strict';
-let videoElement;
-let resultElement;
-let html5QrCode; // Declare the Html5Qrcode instance
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
-// Initialize elements
-function initElement() {
-    videoElement = document.getElementById('videoElement'); // Access the video tag
-    resultElement = document.getElementById('result');      // The element where the scanned QR code text will be displayed
-}
+// Initialize express app
+const app = express();
+app.use(cors()); // Enable CORS
+app.use(bodyParser.json());
+app.use(express.static('public'));  // Serve static files
 
-// Start the camera feed inside the video element
-function startCameraFeed() {
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function (stream) {
-            videoElement.srcObject = stream;
-            videoElement.play(); // Play the camera feed
-            startQRScanner(); // Start scanning after the camera is ready
-        })
-        .catch(function (err) {
-            console.error("Error accessing camera: " + err);
-            resultElement.innerHTML = "Error accessing camera: " + err.message;
-        });
-}
-
-// Start the QR code scanner
-function startQRScanner() {
-    // Create a new Html5Qrcode instance
-    html5QrCode = new Html5Qrcode("qr-reader");
-
-    // Success callback when a QR code is successfully scanned
-    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-        console.log(`Decoded Text: ${decodedText}`);
-        resultElement.innerHTML = `Scanned USN: ${decodedText}`; // Display the scanned text (QR code content)
-    };
-
-    // Error callback if the QR code scan fails or no code is detected
-    const qrCodeErrorCallback = (errorMessage) => {
-        console.log(`QR Code scanning failed: ${errorMessage}`); // Log for debugging
-    };
-
-    // Start scanning for QR codes
-    html5QrCode.start(
-        { facingMode: "environment" }, // Use the back camera
-        {
-            fps: 10,    // Frames per second to scan
-            qrbox: { width: 250, height: 250 } // Size of the QR scan area
-        },
-        qrCodeSuccessCallback,
-        qrCodeErrorCallback
-    ).catch(err => {
-        console.error("Unable to start scanning: ", err);
-        resultElement.innerHTML = "Unable to start scanning: " + err.message;
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initElement();
-    startCameraFeed(); // Start the camera feed when the page loads
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/qrdb', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 });
 
+// Define schema and model
+const usnSchema = new mongoose.Schema({
+    usn: String,
+    scannedAt: { type: Date, default: Date.now }
+});
 
+const USN = mongoose.model('USN', usnSchema);
+
+// Route to handle QR code scan
+app.post('/scan', async (req, res) => {
+    const usn = req.body.usn;
+
+    if (!usn) {
+        return res.status(400).send({ message: 'USN is required' });
+    }
+
+    try {
+        const newUSN = new USN({ usn });
+        await newUSN.save();
+        res.status(200).send({ message: 'USN stored successfully!' });
+    } catch (error) {
+        res.status(500).send({ message: 'Failed to store USN', error });
+    }
+});
+
+// Route to get all stored USNs
+app.get('/usns', async (req, res) => {
+    try {
+        const usns = await USN.find(); // Retrieve all USNs from the database
+        res.status(200).send(usns); // Send the retrieved data as the response
+    } catch (error) {
+        res.status(500).send({ message: 'Failed to retrieve USNs', error });
+    }
+});
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
